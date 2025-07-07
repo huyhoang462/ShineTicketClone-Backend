@@ -14,6 +14,7 @@ import {
   listSpecialEvent,
   listTrendEvent,
   updateEvent,
+  updateEventPaidStatus,
 } from "../services/eventService.js";
 
 const handleGetEvent = async (req, res) => {

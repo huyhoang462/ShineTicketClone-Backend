@@ -14,7 +14,10 @@ dotenv.config(); // Gọi config
 const app = express();
 app.use(cors());
 app.use("/images", express.static(path.join(process.cwd(), "public/images")));
-
+app.get("/ping", (req, res) => {
+  console.log("Ping received, keeping server awake.");
+  res.status(200).send("Pong!");
+});
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

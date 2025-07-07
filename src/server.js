@@ -12,16 +12,7 @@ dotenv.config(); // Gọi config
 
 // config app
 const app = express();
-// Thiết lập CORS để cho phép các yêu cầu từ 'http://localhost:3000'
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "https://shine-ticket-clone.vercel.app",
-    ], // Thay bằng URL của ứng dụng React của bạn
-  })
-);
+app.use(cors());
 app.use("/images", express.static(path.join(process.cwd(), "public/images")));
 
 app.use(cookieParser());

@@ -12,6 +12,7 @@ import {
   handleListEventsByUser,
   handleListSpecialEvent,
   handleListTrendEvent,
+  handleUpdatePaid,
 } from "../controllers/eventController.js";
 import { handleListEvents } from "../controllers/eventController.js";
 import { handleGetEvent } from "../controllers/eventController.js";
@@ -43,6 +44,7 @@ routerEvent.put(
   ]),
   handleEditEvent
 );
+routerEvent.put("/update", handleUpdatePaid);
 routerEvent.delete("/delete", authenticate, handleDeleteEvent);
 
 // special

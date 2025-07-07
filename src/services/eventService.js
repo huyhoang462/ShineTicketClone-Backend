@@ -477,6 +477,58 @@ export const updateEvent = async (eventId, eventData) => {
     };
   }
 };
+export const updateEventPaidStatus = async (eventId, paidStatus) => {
+  try {
+    // 1. Kiểm tra đầu vào
+    if (!eventId) {
+      return {
+        errCode: 1,
+        message: "Event ID is required.",
+      };
+    }
+
+    // Chỉ chấp nhận chuỗi "true" hoặc "false"
+    if (paidStatus !== "true" && paidStatus !== "false") {
+      return {
+        errCode: 2,
+        message: "Invalid paid status. Must be 'true' or 'false'.",
+      };
+    }
+
+    // 2. Chuyển đổi chuỗi thành giá trị boolean
+    const isPaid = paidStatus === "true";
+
+    // 3. Tìm và cập nhật sự kiện trong một thao tác duy nhất
+    // findByIdAndUpdate là một hàm của Mongoose, rất hiệu quả
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId, // Điều kiện tìm kiếm: _id bằng eventId
+      { $set: { paid: isPaid } }, // Dữ liệu cần cập nhật, $set chỉ cập nhật trường 'paid'
+      { new: true } // Tùy chọn: trả về document đã được cập nhật
+    );
+
+    // 4. Kiểm tra xem sự kiện có tồn tại không
+    if (!updatedEvent) {
+      return {
+        errCode: 3,
+        message: "Event not found with the provided ID.",
+      };
+    }
+
+    // 5. Trả về thành công
+    return {
+      errCode: 0,
+      message: `Event paid status successfully updated to ${isPaid}.`,
+      event: updatedEvent, // Trả về sự kiện đã cập nhật (tùy chọn)
+    };
+  } catch (error) {
+    console.error("Error updating event paid status:", error.message);
+    return {
+      errCode: -1,
+      error: error.message,
+      message: "Server error while updating event paid status.",
+    };
+  }
+};
 
 export const deleteEvent = async (eventId) => {
   try {

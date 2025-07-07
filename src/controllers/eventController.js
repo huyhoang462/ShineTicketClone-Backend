@@ -116,6 +116,42 @@ const handleEditEvent = async (req, res) => {
   return res.status(result.errCode === 0 ? 200 : 400).json(result); // Trả về kết quả
 };
 
+const handleUpdatePaid = async (req, res) => {
+  // 1. Lấy dữ liệu từ request body một cách rõ ràng
+  const { eventId, paidStatus } = req.body;
+
+  // 2. Kiểm tra xem dữ liệu cần thiết có được gửi lên không
+  if (!eventId || paidStatus === undefined) {
+    return res.status(400).json({
+      errCode: 1,
+      message:
+        "Missing required parameters: eventId and paidStatus are required.",
+    });
+  }
+
+  try {
+    // 3. Gọi hàm service với dữ liệu đã lấy
+    const result = await updateEventPaidStatus(eventId, String(paidStatus)); // Chuyển đổi sang String để đảm bảo
+
+    // 4. Trả về response dựa trên kết quả từ service
+    // Nếu service trả về errCode khác 0, coi đó là lỗi từ phía client hoặc logic
+    if (result.errCode !== 0) {
+      // Các lỗi như "Event not found" hoặc "Invalid paid status" sẽ rơi vào đây
+      return res.status(400).json(result);
+    }
+
+    // Nếu thành công (errCode === 0)
+    return res.status(200).json(result);
+  } catch (error) {
+    // 5. Bắt các lỗi không mong muốn (lỗi server, lỗi database...)
+    console.error("Critical error in handleUpdatePaid controller:", error);
+    return res.status(500).json({
+      errCode: -1,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 const handleDeleteEvent = async (req, res) => {
   const eventId = req.body.id; // Lấy id sự kiện từ URL params
   const result = await deleteEvent(eventId); // Gọi service để xóa sự kiện
@@ -186,4 +222,5 @@ export {
   handleListBannerEvent,
   handleListSpecialEvent,
   handleListTrendEvent,
+  handleUpdatePaid,
 };
